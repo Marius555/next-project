@@ -9,7 +9,6 @@ import { RegisterAction } from '@/actions/RegisterAction'
 
 export default function Register() {
     const defaultValues ={Username:"", Email: "", Password: "", ConfirmPassword: ""}
-
     const {register,handleSubmit,formState: { errors },} = useForm({defaultValues, resolver: yupResolver(RegisterSchema)})
     const [ispending, setIsPending] = useState(false);
     const [error_response, seterror_response] = useState();

@@ -1,16 +1,22 @@
 "use server"
 import LoginSchema from "@/Schemas/LoginSchema";
-import PocketBase from 'pocketbase';
-import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { headers } from "next/headers";
+import pb from "@/components/Auth";
+
 
 const analyze = async (data) => {
     const result = await LoginSchema.isValid(await data)
-    const pb = new PocketBase('http://127.0.0.1:8090');
     if (result === true) {
         try {
-            const authData = await pb.collection('UserTable').authWithPassword(await data.Email, await data.Password);
-            if (authData) {
-                return { "success": "redirecting" }
+            const dota_resp = await pb.collection('UserTable').authWithPassword(await data.Email, await data.Password);
+
+            if (dota_resp && await pb.collection('UserTable').authRefresh()) {
+                cookies().set(pb.authStore.exportToCookie({ httpOnly: false }), { secure: false })
+                return {"success": JSON.stringify(pb.authStore)}
+            }
+            else{
+                return{"failed": "something went wrong with with validation"}
             }
         }
         catch (error) {
@@ -21,12 +27,8 @@ const analyze = async (data) => {
 
 export async function LoginAction(data) {
     const result = await analyze(data)
-    if (result.success) {
-        return redirect("/")
-    }
-    else {
-        const resp = await result.failed.response.message
-        return resp
+    if (result) {
+        return result
     }
 
 }

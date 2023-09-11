@@ -7,6 +7,9 @@ import LoginSchema from '@/Schemas/LoginSchema'
 import { yupResolver } from "@hookform/resolvers/yup"
 import { LoginAction } from '@/actions/LoginAction'
 import { useRouter } from 'next/navigation'
+import getCookie from './GetCoockies'
+import pb from './Auth'
+import { Token } from '@mui/icons-material'
 
 
 export default function Login() {
@@ -21,8 +24,24 @@ export default function Login() {
 
     const submit = async (data) => {
         setIsPending(true)
+
+
+
         const dependency = await LoginAction(data)
-        seterror_response(await dependency)
+
+        if (dependency.failed) {
+            const error_value = dependency.failed.response.message || "Error"
+            seterror_response(error_value)
+            return setIsPending(false)
+        }
+        if (dependency.success) {
+            setIsPending(false)
+            const DataMutation = JSON.parse(dependency.success)
+            const tok = await DataMutation.storageFallback.pocketbase_auth.token
+            const mod = await DataMutation.storageFallback.pocketbase_auth.model
+            pb.authStore.save(tok,mod)
+            return router.push("/")
+        }
         setIsPending(false)
 
     }

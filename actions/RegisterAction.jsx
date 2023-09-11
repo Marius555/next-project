@@ -14,7 +14,6 @@ const handle = async (data) => {
         "password": data.Password,
         "passwordConfirm": data.ConfirmPassword,
     }
-
     try {
         const record = await pb.collection('UserTable').create(filtered);
         if (result === true) {
