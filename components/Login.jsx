@@ -7,9 +7,7 @@ import LoginSchema from '@/Schemas/LoginSchema'
 import { yupResolver } from "@hookform/resolvers/yup"
 import { LoginAction } from '@/actions/LoginAction'
 import { useRouter } from 'next/navigation'
-import getCookie from './GetCoockies'
 import pb from './Auth'
-import { Token } from '@mui/icons-material'
 
 
 export default function Login() {
@@ -24,13 +22,11 @@ export default function Login() {
 
     const submit = async (data) => {
         setIsPending(true)
-
-
-
         const dependency = await LoginAction(data)
 
         if (dependency.failed) {
-            const error_value = dependency.failed.response.message || "Error"
+            const raw = JSON.parse(dependency.failed)
+            const error_value = raw.response.message || "Error"
             seterror_response(error_value)
             return setIsPending(false)
         }

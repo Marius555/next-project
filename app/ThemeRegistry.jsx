@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme } from '@mui/material/styles';
 import React from 'react';
+
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -16,13 +17,16 @@ import '@fontsource/roboto/700.css';
 // https://github.com/emotion-js/emotion/issues/2928#issuecomment-1319747902
 export default function ThemeRegistry(props) {
   const { options, children } = props;
+  
+
+
   const themeA = createTheme({
-    mode: "light",
     palette: {
+      mode: "light",
       primary: {
-        main: "#0B6C5A"
+        main: "#512da8"
       }
-    },
+    }
   })
 
 

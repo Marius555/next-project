@@ -17,15 +17,15 @@ const handle = async (data) => {
     try {
         const record = await pb.collection('UserTable').create(filtered);
         if (result === true) {
-            await pb.collection('UserTable').requestVerification(data.Email);
-            return {"success": record}
+            // await pb.collection('UserTable').requestVerification(data.Email);
+            return {"Success": "User Have Been Created And Email Was Sent"}
         }
         else {
-            return "failed To Send Verification Email"
+            return {"Failed": "Failed To Send Verification Email"}
         }
     }
     catch (error) {
-        return {"failed": error}
+        return {"Failed": JSON.stringify(error)}
     }
 }
 
@@ -33,13 +33,14 @@ const handle = async (data) => {
 
 export async function RegisterAction(data) {
     const sub = await handle(data)
-    if(sub.success){
+    if(sub.Success){
         redirect("/")
     }
     else{
-        const resp = await sub.failed.response.data
+        const raw = JSON.parse(sub.Failed)
+        const resp = await raw.response.data
         const filter = await Object.values(resp)[0].message
-        return filter
+        return {"Faild": filter}
     }
 
 }
